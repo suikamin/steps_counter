@@ -1,0 +1,8 @@
+__pycache__
+.env
+*.tar.gz
+*.zip
+*.html
+.venv
+cache
+/public

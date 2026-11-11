@@ -21,7 +21,7 @@ from core.avatar import get_avatar_image
 from core.magage_data import load_data, save_data
 from core.models import UserProfile
 from core.route_search import RouteOptimizer
-from core.weekly_report import open_weekly_window as show_weekly_window
+from core.weekly_report import create_weekly_report_frame
 
 # ==========================================
 # カラー＆フォント定義（テーマカラー：スカイブルー）
@@ -74,7 +74,6 @@ class WalkingAppGUIPreview:
         self.title_frame: Optional[tk.Frame] = None
         self.app_container: Optional[tk.Frame] = None
         self.content_frame: Optional[tk.Frame] = None
-        self.weekly_window: Optional[tk.Toplevel] = None
 
         # アニメーション用変数
         self.blink_job: Optional[str] = None
@@ -370,25 +369,23 @@ class WalkingAppGUIPreview:
             btn.place(relx=relx, rely=0.0, relwidth=relw, relheight=1.0)
 
     def switch_tab(self, tab_name: str) -> None:
-        if tab_name == "weekly":
-            self.reload_data()
-            if self.weekly_window is not None and self.weekly_window.winfo_exists():
-                self.weekly_window.destroy()
-            self.weekly_window = show_weekly_window(self.root, self.records, self.GOAL)
-            return
-
         self.stop_sway_animation()
         if self.content_frame is None:
             return
+        
+        # 既存のコンテンツをクリア
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
+        # 各タブを描画
         if tab_name == "home":
             self.render_home_tab()
         elif tab_name == "record":
             self.render_record_tab()
         elif tab_name == "route":
             self.render_route_tab()
+        elif tab_name == "weekly":
+            self.render_weekly_tab()
 
     # --------------------------------------------------
     # 各カテゴリー画面
@@ -697,6 +694,16 @@ class WalkingAppGUIPreview:
             cursor="hand2",
         )
         route_btn.pack(fill="x", pady=(4, 0))
+        
+    def render_weekly_tab(self) -> None:
+        """【レポート画面】（タブ内への埋め込み）"""
+        self.reload_data()
+        
+        # weekly_report.py で作ったフレームを取得して配置
+        report_frame = create_weekly_report_frame(
+            self.content_frame, self.records, self.GOAL
+        )
+        report_frame.pack(fill=tk.BOTH, expand=True)
 
     # --------------------------------------------------
     # アニメーション ＆ イベント処理
@@ -852,4 +859,4 @@ class WalkingAppGUIPreview:
             messagebox.showerror(
                 "ルート検索エラー",
                 f"経路探索中にエラーが発生しました:\n{e}",
-            )
+            ) 

@@ -7,12 +7,12 @@ from datetime import date, timedelta
 from typing import Dict, Optional
 
 
-def open_weekly_window(
+def create_weekly_report_frame(
     parent: tk.Misc,
     records: Optional[Dict[str, int]],
     goal: int = 8000,
-) -> tk.Toplevel:
-    """今週（月曜日～日曜日）の歩数データを折れ線グラフで表示するToplevelウィンドウを開く。"""
+) -> tk.Frame:
+    """今週（月曜日～日曜日）の歩数データを折れ線グラフで表示するFrameを作成する。"""
     if records is None:
         records = {}
 
@@ -47,13 +47,9 @@ def open_weekly_window(
     achieved_days = sum(1 for item in past_items if item["steps"] >= goal)
 
     # --------------------------------------------------
-    # ウィンドウ設定
+    # フレーム設定 (メインウィンドウのタブ用)
     # --------------------------------------------------
-    window = tk.Toplevel(parent)
-    window.title("週間レポート")
-    window.geometry("520x660")
-    window.configure(bg="#F0F8FF")
-    window.resizable(False, False)
+    window = tk.Frame(parent, bg="#F0F8FF")
 
     end_of_week = start_of_week + timedelta(days=6)
     date_range_str = (
@@ -63,7 +59,7 @@ def open_weekly_window(
     tk.Label(
         window,
         text="今週のレポート",
-        font=("Meiryo", 18, "bold"),
+        font=("Meiryo", 16, "bold"),
         bg="#F0F8FF",
         fg="#0288D1",
     ).pack(pady=(15, 2))
@@ -104,8 +100,8 @@ def open_weekly_window(
     # --------------------------------------------------
     # 2. 折れ線グラフ描画エリア (Canvas)
     # --------------------------------------------------
-    canvas_width = 470
-    canvas_height = 270
+    canvas_width = 390  # メインウィンドウに収まるように調整
+    canvas_height = 250
     canvas_card = tk.Frame(window, bg="white", bd=1, relief="solid")
     canvas_card.pack(padx=20, pady=(0, 12))
 
@@ -221,7 +217,7 @@ def open_weekly_window(
             )
 
     # プロット点の描画
-    r = 5
+    r = 4  # サイズ微調整
     for x, y, item in points:
         if item["is_future"]:
             canvas.create_oval(
@@ -268,7 +264,7 @@ def open_weekly_window(
     if achieved_days >= 5:
         advice_msg = "🎉 素晴らしいペースです！今週も目標達成が見えてきました！"
     elif achieved_days >= 3:
-        advice_msg = "👍 いい調子です！週末の散歩でさらに達成日数を増やしましょう。"
+        advice_msg = "👍 いい調子です！週末の散歩で達成日数を増やしましょう。"
     else:
         advice_msg = "💡 無理のない範囲で、あと少し歩数を伸ばしてみましょう！"
 

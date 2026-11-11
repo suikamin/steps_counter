@@ -1,7 +1,7 @@
 # app.py
 """ウォーキング支援＆アバター育成アプリケーションのエントリーポイント。"""
 
-import sys
+import sys, os
 import tkinter as tk
 from pathlib import Path
 
@@ -12,6 +12,12 @@ if str(ROOT_DIR) not in sys.path:
 
 from ui.main_window import WalkingAppGUIPreview
 
+if getattr(sys, 'frozen', False):
+    # PyInstallerで固めた実行ファイルのディレクトリ
+    base_dir = os.path.dirname(sys.executable)
+else:
+    # 通常のPythonスクリプト実行時
+    base_dir = os.path.dirname(os.path.abspath(__file__))
 
 def main() -> None:
     """Tkinterルートウィンドウを生成し、アプリケーションを起動する。"""

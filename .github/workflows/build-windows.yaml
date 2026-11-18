@@ -51,6 +51,7 @@ jobs:
             --collect-data certifi `
             --collect-all pyproj `
             --collect-all pyogrio `
+            --copy-metadata osmnx `
             --collect-submodules sklearn.neighbors `
             --hidden-import PIL._tkinter_finder `
             app.py

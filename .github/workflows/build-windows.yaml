@@ -33,13 +33,13 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller pyinstaller-hooks-contrib
 
-      - name: Build .exe with PyInstaller
+      - name: Build Windows application (--onedir) with PyInstaller
         shell: pwsh
         run: |
           pyinstaller `
             --noconfirm `
             --clean `
-            --onefile `
+            --onedir `
             --windowed `
             --name step_counter `
             --paths . `
@@ -56,19 +56,20 @@ jobs:
             --hidden-import PIL._tkinter_finder `
             app.py
 
-      - name: Verify executable exists
+      - name: Verify build output exists
         shell: pwsh
         run: |
-          if (-not (Test-Path "dist/step_counter.exe")) {
-            Write-Error "dist/step_counter.exe was not created."
+          if (-not (Test-Path "dist/step_counter/step_counter.exe")) {
+            Write-Error "dist/step_counter/step_counter.exe was not created."
             exit 1
           }
-          Get-Item "dist/step_counter.exe" | Select-Object Name, Length
+          Get-Item "dist/step_counter/step_counter.exe" | Select-Object Name, Length
+          Get-ChildItem "dist/step_counter" | Select-Object Name, Mode, Length
 
-      - name: Upload .exe as Artifact
+      - name: Upload build directory as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: step_counter-windows-x64
-          path: dist/step_counter.exe
+          path: dist/step_counter/
           if-no-files-found: error
           retention-days: 30

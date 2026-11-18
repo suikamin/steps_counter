@@ -24,8 +24,8 @@ class RouteOptimizer:
 
     DEFAULT_BASE_LAT: float = 37.8694  # 新潟大学五十嵐キャンパス周辺
     DEFAULT_BASE_LNG: float = 138.9430
-    DEFAULT_START_COORDS: Tuple[float, float] = (37.8703515, 138.9404929)
-    DEFAULT_END_COORDS: Tuple[float, float] = (37.8617007, 138.9463893)
+    DEFAULT_START_COORDS: Tuple[float, float] = (37.8662819, 138.9387117)
+    DEFAULT_END_COORDS: Tuple[float, float] = (37.8586444, 138.9364484)
     DEFAULT_OUTPUT_HTML: str = str(ROOT_DIR / "route_map.html")
 
     # 稼働性の高いOverpassミラーを優先順に配置

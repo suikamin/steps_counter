@@ -10,6 +10,7 @@ from tkinter import messagebox
 from typing import Optional
 import osmnx as ox
 from PIL import Image, ImageTk
+import random
 
 # --------------------------------------------------
 # 親フォルダ(プロジェクトルート)をモジュール検索パスに追加 (ModuleNotFoundError対策)
@@ -262,14 +263,14 @@ class WalkingAppGUIPreview:
 
         tk.Label(
             self.title_frame,
-            text="― 毎日の歩みを、アバターの力に ―",
+            text="― 運動支援＆アバター育成アプリ ―",
             font=(FONT_FAMILY, 10, "bold"),
             fg="#E1F5FE",
             bg=COLOR_PRIMARY,
         ).pack(pady=(120, 8))
         tk.Label(
             self.title_frame,
-            text="Walking &\nAvatar Growth",
+            text=" みちくさステップ ",
             font=(FONT_FAMILY, 26, "bold"),
             fg="#FFFFFF",
             bg=COLOR_PRIMARY,
@@ -581,7 +582,7 @@ class WalkingAppGUIPreview:
         # --- 開始地点 (始点 A) の緯度・経度入力 ---
         tk.Label(
             inner,
-            text="📍 開始地点 (始点 A)",
+            text="📍 開始地点 (デフォルト：新潟大学工学部)",
             font=(FONT_FAMILY, 9, "bold"),
             fg=COLOR_PRIMARY,
             bg=BG_CARD,
@@ -632,7 +633,7 @@ class WalkingAppGUIPreview:
         # --- 終了地点 (終点 B) の緯度・経度入力 ---
         tk.Label(
             inner,
-            text="🏁 終了地点 (終点 B)",
+            text="🏁 終了地点 (デフォルト：内野駅）",
             font=(FONT_FAMILY, 9, "bold"),
             fg=COLOR_PRIMARY,
             bg=BG_CARD,
@@ -845,15 +846,18 @@ class WalkingAppGUIPreview:
             return
 
         is_start = messagebox.askyesno("!",
-            f"直線距離：{distance_m:.2f}km \n 注）ルート検索には時間がかかります！\n 始めますか？"
+            f"直線距離：{distance_m:.0f} m \n 注）ルート検索には時間がかかります！\n 始めますか？"
         )
 
         if is_start :
             try:
+                side = random.choice(["right", "left"])
+
                 result = self.optimizer.search_and_generate_map(
                     target_distance_km=remaining_km,
                     start_coords=start_coords,
                     end_coords=end_coords,
+                    side=side
                 )
                 actual_km = result["actual_distance_m"] / 1000.0
 

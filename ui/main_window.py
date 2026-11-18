@@ -8,6 +8,7 @@ from datetime import date
 from pathlib import Path
 from tkinter import messagebox
 from typing import Optional
+import osmnx as ox
 from PIL import Image, ImageTk
 
 # --------------------------------------------------
@@ -372,7 +373,7 @@ class WalkingAppGUIPreview:
         self.stop_sway_animation()
         if self.content_frame is None:
             return
-        
+
         # 既存のコンテンツをクリア
         for widget in self.content_frame.winfo_children():
             widget.destroy()
@@ -694,11 +695,11 @@ class WalkingAppGUIPreview:
             cursor="hand2",
         )
         route_btn.pack(fill="x", pady=(4, 0))
-        
+
     def render_weekly_tab(self) -> None:
         """【レポート画面】（タブ内への埋め込み）"""
         self.reload_data()
-        
+
         # weekly_report.py で作ったフレームを取得して配置
         report_frame = create_weekly_report_frame(
             self.content_frame, self.records, self.GOAL
@@ -833,30 +834,37 @@ class WalkingAppGUIPreview:
         end_coords = (self.end_lat, self.end_lng)
         self.optimizer.start_coords = start_coords
         self.optimizer.end_coords = end_coords
+        distance_m = ox.distance.great_circle(
+            self.start_lat, self.start_lng,
+            self.end_lat, self.end_lng
+        )
 
         remaining_km = self.profile.target_distance_km
         if remaining_km <= 0:
             messagebox.showinfo("目標達成", "今日の目標歩数は達成されています！✨")
             return
 
-        messagebox.showinfo("!", "ルートを探索中...")
+        is_start = messagebox.askyesno("!",
+            f"直線距離：{distance_m:.2f}km \n 注）ルート検索には時間がかかります！\n 始めますか？"
+        )
 
-        try:
-            result = self.optimizer.search_and_generate_map(
-                target_distance_km=remaining_km,
-                start_coords=start_coords,
-                end_coords=end_coords,
-            )
-            actual_km = result["actual_distance_m"] / 1000.0
-            messagebox.showinfo(
-                "ルート生成完了",
-                f"最適ルートを算出してブラウザで開きました！\n"
-                f"開始地点: ({self.start_lat:.5f}, {self.start_lng:.5f})\n"
-                f"終了地点: ({self.end_lat:.5f}, {self.end_lng:.5f})\n"
-                f"目標距離: {remaining_km:.2f} km / 実走距離: {actual_km:.2f} km",
-            )
-        except Exception as e:
-            messagebox.showerror(
-                "ルート検索エラー",
-                f"経路探索中にエラーが発生しました:\n{e}",
-            ) 
+        if is_start :
+            try:
+                result = self.optimizer.search_and_generate_map(
+                    target_distance_km=remaining_km,
+                    start_coords=start_coords,
+                    end_coords=end_coords,
+                )
+                actual_km = result["actual_distance_m"] / 1000.0
+
+                messagebox.showinfo(
+                    "ルート生成完了",
+                    f"最適ルートを算出してブラウザで開きました！\n"
+                    f"直線距離：{distance_m / 1000} km \n"
+                    f"目標距離: {remaining_km:.2f} km / 実走距離: {actual_km:.2f} km",
+                )
+            except Exception as e:
+                messagebox.showerror(
+                    "ルート検索エラー",
+                    f"経路探索中にエラーが発生しました:\n{e}",
+                )

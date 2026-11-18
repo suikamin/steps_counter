@@ -36,7 +36,7 @@
 ## 3. 要件定義 (System Requirements)
 
 ### 3.1 機能要件 (Functional Requirements)
-1. **ユーザー・歩数・進捗管理機能 (`core/models.py`, `core/magage_data.py`)**:
+1. **ユーザー・歩数・進捗管理機能 (`core/models.py`, `core/manage_data.py`)**:
    * 身長（cm）に基づく個人歩幅の動的算出（`歩幅(m) = (身長(cm) × 0.45) / 100`）。
    * 本日の歩数の加算記録・身長設定と入力バリデーション（整数・正数チェック）。
    * 目標歩数（デフォルト: 8,000歩）に対する不足歩数・超過歩数および目標距離（km / m）の自動計算。
@@ -76,7 +76,7 @@
         │               │                   │                     │
         ▼               ▼                   ▼                     ▼
 ┌──────────────┐ ┌──────────────┐ ┌────────────────────┐ ┌────────────────────┐
-│ UserProfile  │ │ magage_data  │ │ avatar             │ │ weekly_report      │
+│ UserProfile  │ │ manage_data  │ │ avatar             │ │ weekly_report      │
 │ (models.py)  │ │ (JSON永続化) │ │ (avatar.py)        │ │ (weekly_report.py) │
 │ - 歩幅/距離  │ │ - data.json  │ │ - Lv.1〜10植物描画 │ │ - 週間統計集計     │
 │ - Lv/残歩数  │ │ - アトミック │ │ - PNG自動生成      │ │ - Canvas折れ線描画 │
@@ -129,7 +129,7 @@ step_counter/
 └── core/
     ├── __init__.py         # コアパッケージ初期化・各モジュール公開インターフェース
     ├── models.py           # ユーザー情報・歩数・レベル計算モデル (UserProfile)
-    ├── magage_data.py      # JSON永続化・アトミック保存モジュール (load_data, save_data)
+    ├── manage_data.py      # JSON永続化・アトミック保存モジュール (load_data, save_data)
     ├── avatar.py           # Lv.1〜Lv.10 植物成長アバター画像生成モジュール
     ├── route_search.py     # 距離制約充足経路探索・Folium地図生成エンジン (RouteOptimizer)
     ├── weekly_report.py    # 週間歩数レポートToplevelウィンドウ・折れ線グラフ描画モジュール
@@ -164,7 +164,7 @@ step_counter/
   * `next_level_steps -> int`: 次レベル到達までに必要な残り歩数（Lv.10到達時は `0`）。
   * `projected_level -> int`: 本日の目標達成時に到達する想定レベル。
 
-#### 2. データ永続化モジュール (`core/magage_data.py`)
+#### 2. データ永続化モジュール (`core/manage_data.py`)
 日別歩数記録（`YYYY-MM-DD` キー）と身長設定を `core/data.json` に一括して安全に読み書きするモジュール。
 
 * **関数**:
@@ -224,7 +224,7 @@ sequenceDiagram
     autonumber
     actor User as ユーザー
     participant App as WalkingAppGUIPreview (ui/main_window.py)
-    participant Data as magage_data (core/magage_data.py)
+    participant Data as manage_data (core/manage_data.py)
     participant Model as UserProfile (core/models.py)
     participant Avatar as avatar (core/avatar.py)
     participant Report as weekly_report (core/weekly_report.py)

@@ -2,11 +2,15 @@
 """レベル（Lv.1〜Lv.10）に応じた植物育成アバター画像を生成・取得するモジュール。"""
 
 import math
+import sys
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 from PIL import Image, ImageDraw
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+if getattr(sys, "frozen", False):
+    ROOT_DIR = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent))
+else:
+    ROOT_DIR = Path(__file__).resolve().parent.parent
 AVATAR_DIR = ROOT_DIR / "public"
 
 

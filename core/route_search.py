@@ -3,6 +3,7 @@
 
 import heapq
 import math
+import sys
 import webbrowser
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -11,7 +12,10 @@ import folium
 import networkx as nx
 import osmnx as ox
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+if getattr(sys, "frozen", False):
+    ROOT_DIR = Path(sys.executable).resolve().parent
+else:
+    ROOT_DIR = Path(__file__).resolve().parent.parent
 CACHE_DIR = ROOT_DIR / "cache"
 
 

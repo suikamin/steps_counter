@@ -1,11 +1,30 @@
-# core/magage_data.py
+# core/manage_data.py
 """ユーザーデータ（日別歩数記録および身長設定）の永続化を担当するモジュール。"""
 
 import json
+import shutil
+import sys
 from pathlib import Path
 from typing import Any, Dict
 
-DATA_FILE = Path(__file__).resolve().parent / "data.json"
+
+def _get_data_file() -> Path:
+    """実行形態（通常実行 / PyInstaller）に応じた永続データファイルのパスを返す。"""
+    if getattr(sys, "frozen", False):
+        app_dir = Path(sys.executable).resolve().parent
+        target = app_dir / "data.json"
+        if not target.exists():
+            bundled = Path(getattr(sys, "_MEIPASS", app_dir)) / "core" / "data.json"
+            if bundled.exists():
+                try:
+                    shutil.copy2(bundled, target)
+                except OSError:
+                    pass
+        return target
+    return Path(__file__).resolve().parent / "data.json"
+
+
+DATA_FILE = _get_data_file()
 DEFAULT_HEIGHT: float = 170.0
 
 

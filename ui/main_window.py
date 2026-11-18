@@ -18,7 +18,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from core.avatar import get_avatar_image
-from core.magage_data import load_data, save_data
+from core.manage_data import load_data, save_data
 from core.models import UserProfile
 from core.route_search import RouteOptimizer
 from core.weekly_report import create_weekly_report_frame
@@ -65,7 +65,7 @@ class WalkingAppGUIPreview:
         self.end_lat: float = RouteOptimizer.DEFAULT_END_COORDS[0]
         self.end_lng: float = RouteOptimizer.DEFAULT_END_COORDS[1]
 
-        # core.magage_data からデータをロード
+        # core.manage_data からデータをロード
         self.records: dict[str, int] = {}
         self.height: float = UserProfile.DEFAULT_HEIGHT
         self.profile: UserProfile = UserProfile()
@@ -792,7 +792,7 @@ class WalkingAppGUIPreview:
         updated_records = dict(self.records)
         updated_records[today] = updated_records.get(today, 0) + added_steps
 
-        # core.magage_data を使用してアトミック保存
+        # core.manage_data を使用してアトミック保存
         data_to_save = {"records": updated_records, "height": height}
         if save_data(data_to_save):
             self.reload_data()
